@@ -1,6 +1,5 @@
-#################################################################
+
 # Build Stage
-#################################################################
 FROM python:3.9-slim AS builder
 
 # Working directory set karna
@@ -15,9 +14,9 @@ RUN pip install --no-cache-dir -r requirements.txt --target=/app/deps
 # Copy full application source code
 COPY . .
 
-#################################################################
+
 # Final Distroless Runtime Stage
-#################################################################
+
 FROM gcr.io/distroless/python3-debian11
 
 # Working directory set karna (each stage independent hota hai)
