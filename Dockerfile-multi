@@ -1,19 +1,29 @@
+#################################################################
 # Build Stage
+#################################################################
 FROM python:3.9-slim AS builder
+
+# Working directory set karna
 WORKDIR /app
 
-# Copy dependency file first for efficient caching
+# Copy only dependency file first for efficient caching
 COPY requirements.txt .
+
+# Install dependencies in a custom directory
 RUN pip install --no-cache-dir -r requirements.txt --target=/app/deps
 
-# Copy application source code
+# Copy full application source code
 COPY . .
 
-# Final Distroless Stage
+#################################################################
+# Final Distroless Runtime Stage
+#################################################################
 FROM gcr.io/distroless/python3-debian11
+
+# Working directory set karna (each stage independent hota hai)
 WORKDIR /app
 
-# Copy dependencies from the builder stage
+# Copy dependencies and source code from builder stage
 COPY --from=builder /app/deps /app/deps
 COPY --from=builder /app .
 
@@ -24,6 +34,5 @@ ENV PYTHONPATH="/app/deps"
 # Expose the application port
 EXPOSE 80
 
-# Run the application
+# Command to run the application
 CMD ["run.py"]
-
